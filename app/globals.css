@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+/* ====== ETM THEME (variables) ====== */
+:root {
+  --etm-blue: 37 99 235;
+  --etm-slate: 15 23 42;
+  --etm-muted: 100 116 139;
+  --etm-bg: 248 250 252;
+  --etm-line: 226 232 240;
+  --etm-wa: 22 163 74;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: rgb(var(--etm-bg));
+  color: rgb(var(--etm-slate));
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Helpers por si quieres usarlos en className */
+.bg-etm-bg { background-color: rgb(var(--etm-bg)); }
+.text-etm-text { color: rgb(var(--etm-slate)); }
+.text-etm-muted { color: rgb(var(--etm-muted)); }
+.border-etm-line { border-color: rgb(var(--etm-line)); }
