@@ -14,8 +14,7 @@ export default function MexicoPage() {
       title="Visit México"
       subtitle="Explora lo mejor de nuestro país. Cancún, Ciudad de México, Los Cabos, Oaxaca y muchos destinos más."
       heroImg="https://images.unsplash.com/photo-1518638150340-f706e86654de?w=1600&q=80"
-      tag="🇲🇽 Destinos nacionales"
-      emptyIcon="🌵"
+      tag="Destinos nacionales"
     />
   )
 }

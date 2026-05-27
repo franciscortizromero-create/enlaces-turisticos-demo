@@ -11,16 +11,18 @@ export const metadata = {
 
 const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '524491131242'
 
-const TYPE_INFO: Record<string, { icon: string; color: string; img: string }> = {
-  autobus:    { icon: '🚌', color: 'from-blue-800 to-blue-900', img: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80' },
-  sprinter:   { icon: '🚐', color: 'from-navy-700 to-navy-900', img: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=800&q=80' },
-  traslado:   { icon: '🚗', color: 'from-slate-700 to-slate-900', img: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&q=80' },
-  helicoptero:{ icon: '🚁', color: 'from-gray-800 to-gray-950', img: 'https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?w=800&q=80' },
+const TYPE_INFO: Record<string, { color: string; img: string }> = {
+  autobus:    { color: 'from-blue-800 to-blue-900', img: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80' },
+  sprinter:   { color: 'from-navy-700 to-navy-900', img: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=800&q=80' },
+  traslado:   { color: 'from-slate-700 to-slate-900', img: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&q=80' },
+  helicoptero:{ color: 'from-gray-800 to-gray-950', img: 'https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?w=800&q=80' },
 }
 
 async function getServices(): Promise<Service[]> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const key =
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!url || !key) return []
 
@@ -49,23 +51,29 @@ export default async function TransportesPage() {
   const WA_LINK = `https://wa.me/${WA_NUMBER}?text=${WA_TEXT}`
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-background">
       {/* Hero */}
-      <div className="relative h-72 overflow-hidden">
+      <header className="relative h-80 sm:h-96 overflow-hidden">
         <Image
           src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1600&q=80"
-          alt="Transportes"
+          alt=""
           fill className="object-cover" sizes="100vw" priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/80" />
-        <div className="absolute inset-0 flex items-center justify-center text-center px-6">
-          <div>
-            <span className="inline-block rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-semibold text-white backdrop-blur mb-4">🚌 Movilidad total</span>
-            <h1 className="font-display text-4xl sm:text-5xl font-bold text-white mb-3">Servicios de transporte</h1>
-            <p className="text-white/70 max-w-lg mx-auto">Desde traslados al aeropuerto hasta helicópteros. Nos adaptamos a tu grupo y presupuesto.</p>
+        <div className="absolute inset-0 bg-gradient-to-b from-navy-900/50 via-navy-900/60 to-navy-900/85" />
+        <div className="relative h-full flex items-center justify-center text-center px-6">
+          <div className="animate-fade-up max-w-2xl">
+            <span className="inline-block rounded-full border border-white/20 bg-white/10 backdrop-blur px-4 py-1.5 text-caption font-semibold text-white mb-5 uppercase tracking-wider">
+              Movilidad total
+            </span>
+            <h1 className="font-display text-display-lg sm:text-display-xl font-bold text-white mb-4 tracking-tight">
+              Servicios de transporte
+            </h1>
+            <p className="text-body-lg text-white/85 max-w-xl mx-auto leading-relaxed">
+              Desde traslados al aeropuerto hasta helicópteros. Nos adaptamos a tu grupo y presupuesto.
+            </p>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* Servicios */}
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-14">
@@ -83,11 +91,10 @@ export default async function TransportesPage() {
                     fill className="object-cover"
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
-                  <div className={`absolute inset-0 bg-gradient-to-t ${info.color} opacity-60`} />
-                  <div className="absolute bottom-4 left-5">
-                    <div className="text-3xl mb-1">{info.icon}</div>
+                  <div className={`absolute inset-0 bg-gradient-to-t ${info.color} opacity-70`} />
+                  <div className="absolute bottom-4 left-5 right-5">
                     <div className="font-display text-xl font-bold text-white">{svc.name}</div>
-                    <div className="text-xs text-white/70">{svc.capacity}</div>
+                    <div className="text-xs text-white/80 mt-1">{svc.capacity}</div>
                   </div>
                 </div>
                 <div className="p-5">
@@ -129,6 +136,6 @@ export default async function TransportesPage() {
           </a>
         </div>
       </div>
-    </main>
+    </div>
   )
 }
