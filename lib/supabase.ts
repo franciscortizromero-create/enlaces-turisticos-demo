@@ -40,4 +40,5 @@ export type Service = {
   currency?: 'MXN' | 'USD'
   image_url?: string
   active: boolean
+  created_at?: string
 }
