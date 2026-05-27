@@ -36,6 +36,10 @@ export default function AdminDashboard() {
 
   // ── Auth check ──
   useEffect(() => {
+    if (!supabase) {
+      router.replace('/admin')
+      return
+    }
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) { router.replace('/admin'); return }
       setUser(session.user)
@@ -45,6 +49,11 @@ export default function AdminDashboard() {
 
   async function loadOffers() {
     setLoading(true)
+    if (!supabase) {
+      setOffers([])
+      setLoading(false)
+      return
+    }
     const { data } = await supabase
       .from('offers')
       .select('*')
@@ -76,6 +85,7 @@ export default function AdminDashboard() {
 
   // ── Subir imagen ──
   async function handleImageUpload(file: File) {
+    if (!supabase) return
     setUploadingImg(true)
     try {
       const session = (await supabase.auth.getSession()).data.session
@@ -98,6 +108,10 @@ export default function AdminDashboard() {
   async function handleSave() {
     if (!editing.title || !editing.city || !editing.price) {
       alert('Completa: título, ciudad y precio')
+      return
+    }
+    if (!supabase) {
+      alert('Supabase no está configurado')
       return
     }
     setSaving(true)
@@ -137,6 +151,7 @@ export default function AdminDashboard() {
 
   // ── Eliminar ──
   async function handleDelete(id: string, title: string) {
+    if (!supabase) return
     if (!confirm(`¿Eliminar "${title}"? Esta acción no se puede deshacer.`)) return
     const session = (await supabase.auth.getSession()).data.session
     await fetch(`/api/offers?id=${id}`, {
@@ -150,6 +165,7 @@ export default function AdminDashboard() {
 
   // ── Toggle activo/destacado ──
   async function toggleField(id: string, field: 'active' | 'featured', current: boolean) {
+    if (!supabase) return
     await supabase.from('offers').update({ [field]: !current }).eq('id', id)
     loadOffers()
   }
@@ -164,7 +180,10 @@ export default function AdminDashboard() {
     setEditing(e => ({ ...e, includes: (e.includes || []).filter((_, idx) => idx !== i) }))
   }
 
-  const signOut = async () => { await supabase.auth.signOut(); router.replace('/admin') }
+  const signOut = async () => {
+    if (supabase) await supabase.auth.signOut()
+    router.replace('/admin')
+  }
 
   // ── UI ──
   return (
