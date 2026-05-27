@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+
+  /* Paleta navy */
+  --navy-900: #08122e;
+  --navy-800: #0e1e52;
+  --navy-700: #152d6e;
+  --navy-600: #1e3f8a;
+  --navy-500: #2952a3;
+  --navy-50:  #eef2ff;
+
+  --gold-500: #e6b020;
+  --gold-400: #f5c842;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: #f8f9fc;
+  color: #111827;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Componentes reutilizables ── */
+
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl bg-navy-600 px-5 py-3 text-sm font-semibold text-white transition-all hover:bg-navy-700 hover:shadow-lg;
+}
+
+.btn-outline {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl border-2 border-navy-600 px-5 py-3 text-sm font-semibold text-navy-700 transition-all hover:bg-navy-50;
+}
+
+.btn-whatsapp {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 px-5 py-3 text-sm font-semibold text-white transition-all hover:bg-green-700 hover:shadow-lg;
+}
+
+.btn-gold {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl bg-gold-500 px-5 py-3 text-sm font-semibold text-navy-900 transition-all hover:bg-gold-400 hover:shadow-lg;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  @apply text-3xl font-bold tracking-tight text-navy-900 sm:text-4xl;
+}
+
+.card {
+  @apply rounded-2xl bg-white shadow-sm border border-slate-100 overflow-hidden transition-all hover:shadow-md;
+}
+
+/* ── Navbar link ── */
+.nav-link {
+  @apply relative text-sm font-medium text-white/80 transition-colors hover:text-white;
+}
+.nav-link::after {
+  content: '';
+  @apply absolute -bottom-1 left-0 h-0.5 w-0 bg-gold-400 transition-all;
+}
+.nav-link:hover::after { @apply w-full; }
+
+/* ── Slider ── */
+.embla { overflow: hidden; }
+.embla__container { display: flex; }
+.embla__slide { flex: 0 0 100%; min-width: 0; }
+
+/* ── Animaciones de entrada ── */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
