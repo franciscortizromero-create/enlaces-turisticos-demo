@@ -109,22 +109,36 @@ export default function AdminDashboard() {
     setEditing(EMPTY_OFFER)
   }
 
-  // ── Subir imagen ──
+  // ── Subir imagen (directo a Supabase Storage) ──
   async function handleImageUpload(file: File) {
     if (!supabase) return
+
+    // Validar tipo y tamaño
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+    if (!allowedTypes.includes(file.type)) {
+      alert('Solo se permiten imágenes JPG, PNG o WebP')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      alert('La imagen no puede superar 5 MB')
+      return
+    }
+
     setUploadingImg(true)
     try {
-      const session = (await supabase.auth.getSession()).data.session
-      const fd = new FormData()
-      fd.append('file', file)
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        headers: { authorization: `Bearer ${session?.access_token}` },
-        body: fd,
-      })
-      const json = await res.json()
-      if (json.url) setEditing(e => ({ ...e, image_url: json.url }))
-      else alert('Error al subir imagen: ' + json.error)
+      const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+      const safeName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+
+      const { data, error } = await supabase.storage
+        .from('ofertas')
+        .upload(safeName, file, { contentType: file.type, upsert: false })
+
+      if (error) throw new Error(error.message)
+
+      const { data: urlData } = supabase.storage.from('ofertas').getPublicUrl(data.path)
+      setEditing(e => ({ ...e, image_url: urlData.publicUrl }))
+    } catch (err) {
+      alert('Error al subir imagen: ' + (err instanceof Error ? err.message : String(err)))
     } finally {
       setUploadingImg(false)
     }
@@ -142,27 +156,25 @@ export default function AdminDashboard() {
     }
     setSaving(true)
     try {
-      const session = (await supabase.auth.getSession()).data.session
-
       // Generar slug
       const slug = editing.title!
         .toLowerCase()
         .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
         .replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
 
-      const payload = { ...editing, slug }
-
-      const method = isNew ? 'POST' : 'PUT'
-      const res = await fetch('/api/offers', {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Bearer ${session?.access_token}`,
-        },
-        body: JSON.stringify(payload),
-      })
-
-      if (!res.ok) { const e = await res.json(); throw new Error(e.error) }
+      if (isNew) {
+        const payload = { ...editing, slug }
+        const { error } = await supabase.from('offers').insert([payload])
+        if (error) throw new Error(error.message)
+      } else {
+        const editObj = editing as Offer & { created_at?: string; updated_at?: string }
+        const { id, created_at, updated_at, ...rest } = editObj
+        const { error } = await supabase
+          .from('offers')
+          .update({ ...rest, slug })
+          .eq('id', id)
+        if (error) throw new Error(error.message)
+      }
 
       setSuccessMsg(isNew ? '✅ Viaje creado exitosamente' : '✅ Viaje actualizado')
       setTimeout(() => setSuccessMsg(''), 3000)
@@ -179,11 +191,11 @@ export default function AdminDashboard() {
   async function handleDelete(id: string, title: string) {
     if (!supabase) return
     if (!confirm(`¿Eliminar "${title}"? Esta acción no se puede deshacer.`)) return
-    const session = (await supabase.auth.getSession()).data.session
-    await fetch(`/api/offers?id=${id}`, {
-      method: 'DELETE',
-      headers: { authorization: `Bearer ${session?.access_token}` },
-    })
+    const { error } = await supabase.from('offers').delete().eq('id', id)
+    if (error) {
+      alert('Error al eliminar: ' + error.message)
+      return
+    }
     setSuccessMsg('🗑️ Viaje eliminado')
     setTimeout(() => setSuccessMsg(''), 3000)
     loadOffers()
