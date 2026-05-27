@@ -38,3 +38,11 @@ yarn-error.log*
 Thumbs.db
 
 .vercel
+.env*
+
+# Skills (mantener fuera del build)
+skills/
+
+# Python
+__pycache__/
+*.pyc

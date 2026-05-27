@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/utils/supabase/server'
+import { requireAdmin } from '@/utils/supabase/admin'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-
-const supabase = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null
-
+/**
+ * GET /api/offers - Pública, filtra por section/featured/category
+ */
 export async function GET(request: NextRequest) {
+  const supabase = await createClient()
   if (!supabase) return NextResponse.json({ data: [] })
 
   const { searchParams } = new URL(request.url)
@@ -33,24 +31,48 @@ export async function GET(request: NextRequest) {
   return NextResponse.json(data)
 }
 
+/**
+ * POST /api/offers - SOLO admins
+ */
 export async function POST(request: NextRequest) {
-  if (!supabase) return NextResponse.json({ error: 'Supabase no configurado' }, { status: 503 })
+  const auth = await requireAdmin()
+  if (!auth) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  }
+  const { supabase, user } = auth
 
-  const authHeader = request.headers.get('authorization')
-  if (!authHeader) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  let body
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
+  }
 
-  const body = await request.json()
+  // Validación básica
+  if (!body.title || typeof body.title !== 'string' || body.title.length < 3) {
+    return NextResponse.json({ error: 'Título requerido (mínimo 3 caracteres)' }, { status: 400 })
+  }
+  if (!body.city || typeof body.city !== 'string') {
+    return NextResponse.json({ error: 'Ciudad requerida' }, { status: 400 })
+  }
+  if (typeof body.price !== 'number' || body.price <= 0) {
+    return NextResponse.json({ error: 'Precio inválido' }, { status: 400 })
+  }
 
-  // Generar slug desde el título si no viene
+  // Generar slug si no viene
   if (!body.slug && body.title) {
     body.slug = body.title
       .toLowerCase()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
       .replace(/[^a-z0-9\s-]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
       .trim()
   }
+
+  // Audit trail
+  body.created_by = user.id
+  body.updated_by = user.id
 
   const { data, error } = await supabase
     .from('offers')
@@ -62,14 +84,28 @@ export async function POST(request: NextRequest) {
   return NextResponse.json(data, { status: 201 })
 }
 
+/**
+ * PUT /api/offers - SOLO admins
+ */
 export async function PUT(request: NextRequest) {
-  if (!supabase) return NextResponse.json({ error: 'Supabase no configurado' }, { status: 503 })
+  const auth = await requireAdmin()
+  if (!auth) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  }
+  const { supabase, user } = auth
 
-  const authHeader = request.headers.get('authorization')
-  if (!authHeader) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  let body
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
+  }
 
-  const body = await request.json()
   const { id, ...updates } = body
+  if (!id) return NextResponse.json({ error: 'ID requerido' }, { status: 400 })
+
+  // Audit trail
+  updates.updated_by = user.id
 
   const { data, error } = await supabase
     .from('offers')
@@ -82,11 +118,15 @@ export async function PUT(request: NextRequest) {
   return NextResponse.json(data)
 }
 
+/**
+ * DELETE /api/offers?id=xxx - SOLO admins
+ */
 export async function DELETE(request: NextRequest) {
-  if (!supabase) return NextResponse.json({ error: 'Supabase no configurado' }, { status: 503 })
-
-  const authHeader = request.headers.get('authorization')
-  if (!authHeader) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  const auth = await requireAdmin()
+  if (!auth) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  }
+  const { supabase } = auth
 
   const { searchParams } = new URL(request.url)
   const id = searchParams.get('id')

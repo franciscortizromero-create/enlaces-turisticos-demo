@@ -3,7 +3,10 @@
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { supabase, type Offer } from '@/lib/supabase'
+import { createClient } from '@/utils/supabase/client'
+import { type Offer } from '@/lib/supabase'
+
+const supabase = createClient()
 
 const EMPTY_OFFER: Partial<Offer> = {
   title: '', city: '', country: 'México', hotel: '',
@@ -34,17 +37,40 @@ export default function AdminDashboard() {
   const [includeInput, setIncludeInput] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
-  // ── Auth check ──
+  // ── Auth check: usuario debe estar autenticado Y ser admin ──
   useEffect(() => {
     if (!supabase) {
       router.replace('/admin')
       return
     }
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) { router.replace('/admin'); return }
-      setUser(session.user)
+
+    const checkAuthAndAdmin = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user || !user.email) {
+        router.replace('/admin')
+        return
+      }
+
+      // Verificar que el email esté en la tabla admins
+      const { data: adminRow, error } = await supabase
+        .from('admins')
+        .select('id, role, active')
+        .eq('email', user.email)
+        .eq('active', true)
+        .maybeSingle()
+
+      if (error || !adminRow) {
+        // No es admin: cerrar sesión y redirigir
+        await supabase.auth.signOut()
+        router.replace('/admin?error=denied')
+        return
+      }
+
+      setUser({ email: user.email })
       loadOffers()
-    })
+    }
+
+    checkAuthAndAdmin()
   }, [router])
 
   async function loadOffers() {
@@ -315,9 +341,23 @@ export default function AdminDashboard() {
                       type="button"
                       onClick={() => fileRef.current?.click()}
                       disabled={uploadingImg}
-                      className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 transition disabled:opacity-50"
+                      aria-label="Subir foto del viaje"
+                      className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 transition disabled:opacity-50 min-h-[40px]"
                     >
-                      {uploadingImg ? '⏳ Subiendo...' : '📷 Subir foto'}
+                      {uploadingImg ? (
+                        <>
+                          <div className="h-4 w-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" role="status" aria-label="Subiendo" />
+                          <span>Subiendo...</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"/>
+                          </svg>
+                          <span>Subir foto</span>
+                        </>
+                      )}
                     </button>
                     {editing.image_url && (
                       <input className="input flex-1 text-xs" value={editing.image_url} onChange={e => setEditing(p => ({ ...p, image_url: e.target.value }))} placeholder="o pega URL" />
@@ -359,13 +399,30 @@ export default function AdminDashboard() {
 
                 {/* Toggles */}
                 <div className="flex items-center gap-6">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" className="accent-navy-600 h-4 w-4" checked={editing.active ?? true} onChange={e => setEditing(p => ({ ...p, active: e.target.checked }))} />
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      className="accent-navy-600 h-4 w-4"
+                      checked={editing.active ?? true}
+                      onChange={e => setEditing(p => ({ ...p, active: e.target.checked }))}
+                      aria-describedby="active-help"
+                    />
                     <span className="text-sm font-medium text-slate-700">Publicado</span>
                   </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" className="accent-gold-500 h-4 w-4" checked={editing.featured ?? false} onChange={e => setEditing(p => ({ ...p, featured: e.target.checked }))} />
-                    <span className="text-sm font-medium text-slate-700">⭐ Destacado</span>
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      className="accent-gold-500 h-4 w-4"
+                      checked={editing.featured ?? false}
+                      onChange={e => setEditing(p => ({ ...p, featured: e.target.checked }))}
+                      aria-describedby="featured-help"
+                    />
+                    <span className="flex items-center gap-1 text-sm font-medium text-slate-700">
+                      <svg className="h-4 w-4 text-gold-500" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                      </svg>
+                      Destacado
+                    </span>
                   </label>
                 </div>
               </div>

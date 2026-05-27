@@ -1,17 +1,39 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Enlaces Turísticos Marroquí | Viajes organizados',
+  title: 'Enlaces Turísticos Marroquí | Viajes organizados desde Aguascalientes',
   description: 'Agencia de viajes en Aguascalientes. Europa, playas mexicanas, traslados y más. Cotiza directo por WhatsApp.',
+  keywords: ['agencia de viajes', 'viajes Aguascalientes', 'tours Europa', 'playas México', 'traslados aeropuerto'],
+  authors: [{ name: 'Enlaces Turísticos Marroquí' }],
   openGraph: {
     title: 'Enlaces Turísticos Marroquí',
     description: 'Viajes organizados, precios claros, atención directa.',
     locale: 'es_MX',
     type: 'website',
+    siteName: 'Enlaces Turísticos Marroquí',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Enlaces Turísticos Marroquí',
+    description: 'Viajes organizados, precios claros, atención directa.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#0e1e52' },
+    { media: '(prefers-color-scheme: dark)',  color: '#08122e' },
+  ],
 }
 
 const WA_NUMBER  = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '524491131242'
@@ -22,20 +44,32 @@ const IG_URL     = process.env.NEXT_PUBLIC_INSTAGRAM_URL || 'https://instagram.c
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <body className="min-h-screen antialiased">
+
+        {/* Skip to main content para accesibilidad (Aparece solo con keyboard) */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-accent focus:text-accent-foreground focus:rounded-lg focus:shadow-lg focus:font-semibold"
+        >
+          Saltar al contenido principal
+        </a>
 
         {/* ═══════════════════════════════════════
             HEADER — Azul marino profesional
         ═══════════════════════════════════════ */}
-        <header className="sticky top-0 z-50 bg-navy-800 shadow-lg">
+        <header className="sticky top-0 z-50 bg-navy-800 shadow-lg" role="banner">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <div className="flex h-16 items-center justify-between gap-4">
 
               {/* Logo */}
-              <Link href="/" className="flex items-center gap-3 shrink-0">
+              <Link
+                href="/"
+                className="flex items-center gap-3 shrink-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-navy-800"
+                aria-label="Ir al inicio - Enlaces Turísticos Marroquí"
+              >
                 <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-white/20 bg-white/10">
-                  <Image src="/logo-etm.png" alt="ETM" width={40} height={40} priority />
+                  <Image src="/logo-etm.png" alt="" width={40} height={40} priority />
                 </div>
                 <div className="hidden sm:block">
                   <div className="font-display text-base font-bold text-white leading-tight">
@@ -46,7 +80,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </Link>
 
               {/* Nav desktop */}
-              <nav className="hidden md:flex items-center gap-7">
+              <nav className="hidden md:flex items-center gap-7" aria-label="Navegación principal">
                 <Link href="/ofertas"    className="nav-link">Ofertas</Link>
                 <Link href="/mexico"     className="nav-link">Visit México</Link>
                 <Link href="/europa"     className="nav-link">Europa</Link>
@@ -56,9 +90,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </nav>
 
               {/* CTA */}
-              <a href={WA_LINK} target="_blank" rel="noreferrer"
-                className="btn-whatsapp shrink-0 text-xs sm:text-sm px-3 sm:px-5 py-2 sm:py-3">
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+              <a
+                href={WA_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Cotizar por WhatsApp (se abre en nueva ventana)"
+                className="btn-whatsapp shrink-0 text-xs sm:text-sm px-3 sm:px-5 py-2 sm:py-3"
+              >
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
                   <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.124 1.532 5.855L.054 23.454a.5.5 0 0 0 .492.546h.038l5.8-1.519A11.934 11.934 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.007-1.374l-.36-.214-3.724.976.994-3.62-.234-.373A9.818 9.818 0 1 1 12 21.818z"/>
                 </svg>
@@ -68,7 +107,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
 
           {/* Nav mobile */}
-          <div className="md:hidden border-t border-white/10 bg-navy-900 overflow-x-auto">
+          <nav
+            className="md:hidden border-t border-white/10 bg-navy-900 overflow-x-auto"
+            aria-label="Navegación móvil"
+          >
             <div className="flex items-center gap-1 px-4 py-2 min-w-max">
               {[
                 ['/ofertas', 'Ofertas'],
@@ -78,17 +120,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 ['/transportes', 'Transportes'],
                 ['/catalogo', 'Catálogo'],
               ].map(([href, label]) => (
-                <Link key={href} href={href}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-white/70 hover:text-white hover:bg-white/10 whitespace-nowrap transition-colors">
+                <Link
+                  key={href}
+                  href={href}
+                  className="px-3 py-2 rounded-lg text-xs font-medium text-white/70 hover:text-white hover:bg-white/10 whitespace-nowrap transition-colors min-h-[40px] flex items-center"
+                >
                   {label}
                 </Link>
               ))}
             </div>
-          </div>
+          </nav>
         </header>
 
         {/* Contenido */}
-        {children}
+        <main id="main-content" role="main">
+          {children}
+        </main>
 
         {/* ═══════════════════════════════════════
             FOOTER — Negro con redes sociales

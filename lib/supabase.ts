@@ -1,13 +1,27 @@
-import { createClient } from '@supabase/supabase-js'
+/**
+ * Tipos compartidos del proyecto.
+ * Para crear clientes Supabase usa:
+ *   - Server: import { createClient } from '@/utils/supabase/server'
+ *   - Client: import { createClient } from '@/utils/supabase/client'
+ *
+ * Este archivo se mantiene por compatibilidad con código antiguo.
+ */
+import { createBrowserClient } from '@supabase/ssr'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+const supabaseKey =
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  ''
 
-export const supabase = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null
+// Cliente legacy para código que aún lo importa
+export const supabase =
+  supabaseUrl && supabaseKey
+    ? createBrowserClient(supabaseUrl, supabaseKey)
+    : null
 
-// Types
+// ─── Types ───
+
 export type Offer = {
   id: string
   slug: string
@@ -29,7 +43,10 @@ export type Offer = {
   notes?: string
   active: boolean
   featured: boolean
+  created_by?: string
+  updated_by?: string
   created_at: string
+  updated_at?: string
 }
 
 export type Service = {
@@ -43,4 +60,15 @@ export type Service = {
   image_url?: string
   active: boolean
   created_at?: string
+  updated_at?: string
+}
+
+export type Admin = {
+  id: string
+  email: string
+  name?: string
+  role: 'super_admin' | 'admin' | 'editor'
+  active: boolean
+  created_at: string
+  last_login?: string
 }

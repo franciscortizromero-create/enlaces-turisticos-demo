@@ -13,28 +13,28 @@ const WA_LINK   = `https://wa.me/${WA_NUMBER}?text=${WA_TEXT}`
 const HERO_SLIDES = [
   {
     img: 'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=1600&q=80',
-    tag: '🌴 Caribe Mexicano',
+    tag: 'Caribe Mexicano',
     title: 'Riviera Maya',
     sub: 'Todo incluido desde $9,599 MXN',
     href: '/playas',
   },
   {
     img: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=1600&q=80',
-    tag: '🗼 Europa',
+    tag: 'Europa',
     title: 'París, Roma y Madrid',
     sub: 'Paquetes europeos con todo incluido',
     href: '/europa',
   },
   {
     img: 'https://images.unsplash.com/photo-1518638150340-f706e86654de?w=1600&q=80',
-    tag: '🏛️ Visit México',
+    tag: 'Visit México',
     title: 'Conoce México',
     sub: 'Los mejores destinos nacionales',
     href: '/mexico',
   },
   {
     img: 'https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?w=1600&q=80',
-    tag: '🚁 Traslados exclusivos',
+    tag: 'Traslados exclusivos',
     title: 'Helicópteros y más',
     sub: 'Autobuses, sprinters y helicópteros',
     href: '/transportes',
@@ -73,12 +73,48 @@ const DESTINOS = [
   },
 ]
 
-// ── Servicios de transporte ──
+// ── Servicios de transporte (SVG icons profesionales) ──
 const TRANSPORTES = [
-  { icon: '🚌', title: 'Autobús de turismo', cap: 'Hasta 50 personas', desc: 'Ideal para grupos grandes. A/C, reclinable.' },
-  { icon: '🚐', title: 'Sprinter ejecutiva', cap: 'Hasta 19 personas', desc: 'Van Mercedes-Benz para grupos medianos.' },
-  { icon: '🚗', title: 'Traslado aeropuerto', cap: 'Hasta 8 personas', desc: 'Puerta a puerta, puntual y seguro.' },
-  { icon: '🚁', title: 'Helicóptero', cap: 'Hasta 5 personas', desc: 'Vuelos panorámicos y traslados exclusivos.' },
+  {
+    title: 'Autobús de turismo',
+    cap: 'Hasta 50 personas',
+    desc: 'Ideal para grupos grandes. A/C, reclinable.',
+    svg: (
+      <svg className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" aria-hidden="true">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/>
+      </svg>
+    ),
+  },
+  {
+    title: 'Sprinter ejecutiva',
+    cap: 'Hasta 19 personas',
+    desc: 'Van Mercedes-Benz para grupos medianos.',
+    svg: (
+      <svg className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" aria-hidden="true">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0112 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125"/>
+      </svg>
+    ),
+  },
+  {
+    title: 'Traslado aeropuerto',
+    cap: 'Hasta 8 personas',
+    desc: 'Puerta a puerta, puntual y seguro.',
+    svg: (
+      <svg className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" aria-hidden="true">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25"/>
+      </svg>
+    ),
+  },
+  {
+    title: 'Helicóptero',
+    cap: 'Hasta 5 personas',
+    desc: 'Vuelos panorámicos y traslados exclusivos.',
+    svg: (
+      <svg className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" aria-hidden="true">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/>
+      </svg>
+    ),
+  },
 ]
 
 // ── Componente Slider ──
@@ -169,7 +205,7 @@ function HeroSlider() {
 // ── Página principal ──
 export default function HomePage() {
   return (
-    <main>
+    <>
 
       {/* HERO SLIDER */}
       <HeroSlider />
@@ -211,11 +247,16 @@ export default function HomePage() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {TRANSPORTES.map((t) => (
-              <div key={t.title} className="rounded-2xl border border-white/10 bg-white/5 p-6 hover:bg-white/10 transition-colors">
-                <div className="text-4xl mb-4">{t.icon}</div>
+              <div
+                key={t.title}
+                className="group rounded-2xl border border-white/10 bg-white/5 p-6 hover:bg-white/10 hover:border-gold-400/30 transition-all duration-300 ease-out-expo hover:-translate-y-1"
+              >
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gold-400/10 text-gold-400 mb-4 group-hover:bg-gold-400/20 transition-colors">
+                  {t.svg}
+                </div>
                 <div className="font-semibold text-white mb-1">{t.title}</div>
                 <div className="text-xs text-gold-400 font-medium mb-3">{t.cap}</div>
-                <p className="text-sm text-white/60">{t.desc}</p>
+                <p className="text-sm text-white/60 leading-relaxed">{t.desc}</p>
               </div>
             ))}
           </div>
@@ -275,6 +316,6 @@ export default function HomePage() {
         </div>
       </section>
 
-    </main>
+    </>
   )
 }
