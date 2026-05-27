@@ -12,6 +12,10 @@ export default function AdminLoginPage() {
 
   useEffect(() => {
     // Si ya está autenticado, redirigir al dashboard
+    if (!supabase) {
+      setChecking(false)
+      return
+    }
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) router.replace('/admin/dashboard')
       else setChecking(false)
@@ -19,6 +23,10 @@ export default function AdminLoginPage() {
   }, [router])
 
   const handleGoogleLogin = async () => {
+    if (!supabase) {
+      alert('Supabase no está configurado')
+      return
+    }
     setLoading(true)
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
