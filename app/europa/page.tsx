@@ -1,5 +1,7 @@
 import { SectionPage } from '@/components/SectionPage'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Europa | Enlaces Turísticos Marroquí',
   description: 'Paquetes a Europa: París, Roma, Barcelona, Ámsterdam y más.',

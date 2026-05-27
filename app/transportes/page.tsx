@@ -2,6 +2,8 @@ import Image from 'next/image'
 import { createClient } from '@supabase/supabase-js'
 import type { Service } from '@/lib/supabase'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Transportes | Enlaces Turísticos Marroquí',
   description: 'Renta de autobuses, sprinters ejecutivas, traslados aeropuerto y helicópteros en Aguascalientes.',
@@ -17,10 +19,12 @@ const TYPE_INFO: Record<string, { icon: string; color: string; img: string }> = 
 }
 
 async function getServices(): Promise<Service[]> {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!url || !key) return []
+
+  const supabase = createClient(url, key)
   const { data } = await supabase
     .from('services')
     .select('*')

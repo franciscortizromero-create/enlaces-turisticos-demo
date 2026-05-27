@@ -1,5 +1,7 @@
 import { SectionPage } from '@/components/SectionPage'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Visit México | Enlaces Turísticos Marroquí',
   description: 'Los mejores destinos nacionales: Cancún, CDMX, Los Cabos, Oaxaca y más.',

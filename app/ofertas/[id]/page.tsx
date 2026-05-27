@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { offers } from "@/data/offers";
 
+export const dynamic = 'force-dynamic'
+
 const WHATSAPP_NUMBER = "524491131242"; // <-- cambia al real
 
 type PageProps = {

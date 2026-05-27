@@ -3,11 +3,15 @@ import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js'
 import type { Offer } from '@/lib/supabase'
 
+export const dynamic = 'force-dynamic'
+
 async function getOffers(): Promise<Offer[]> {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!url || !key) return []
+
+  const supabase = createClient(url, key)
   const { data } = await supabase
     .from('offers')
     .select('*')

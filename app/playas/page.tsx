@@ -1,5 +1,7 @@
 import { SectionPage } from '@/components/SectionPage'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Playas | Enlaces Turísticos Marroquí',
   description: 'Paquetes de playa todo incluido: Riviera Maya, Huatulco, Los Cabos y más.',
