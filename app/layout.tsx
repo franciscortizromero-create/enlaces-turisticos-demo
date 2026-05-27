@@ -59,23 +59,30 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             HEADER — Azul marino profesional
         ═══════════════════════════════════════ */}
         <header className="sticky top-0 z-50 bg-navy-800 shadow-lg" role="banner">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6">
-            <div className="flex h-16 items-center justify-between gap-4">
+          <div className="mx-auto max-w-7xl px-3 sm:px-6">
+            <div className="flex h-16 sm:h-20 items-center justify-between gap-2 sm:gap-4">
 
               {/* Logo */}
               <Link
                 href="/"
-                className="flex items-center gap-3 shrink-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-navy-800"
+                className="flex items-center gap-2 sm:gap-3 shrink min-w-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-navy-800"
                 aria-label="Ir al inicio - Enlaces Turísticos Marroquí"
               >
-                <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-white/20 bg-white/10">
-                  <Image src="/logo-etm.png" alt="" width={40} height={40} priority />
-                </div>
-                <div className="hidden sm:block">
-                  <div className="font-display text-base font-bold text-white leading-tight">
+                <Image
+                  src="/logo-etm.png"
+                  alt=""
+                  width={64}
+                  height={64}
+                  priority
+                  className="h-12 w-12 sm:h-14 sm:w-14 object-contain shrink-0"
+                />
+                <div className="min-w-0">
+                  <div className="font-display text-[clamp(0.95rem,3.5vw,1.35rem)] font-bold text-white leading-tight whitespace-nowrap">
                     Enlaces Turísticos
                   </div>
-                  <div className="text-xs text-white/60 -mt-0.5 font-body">Marroquí</div>
+                  <div className="text-[clamp(0.7rem,2.5vw,0.95rem)] text-white/70 -mt-0.5 font-body leading-tight">
+                    Marroquí
+                  </div>
                 </div>
               </Link>
 
@@ -95,7 +102,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Cotizar por WhatsApp (se abre en nueva ventana)"
-                className="btn-whatsapp shrink-0 text-xs sm:text-sm px-3 sm:px-5 py-2 sm:py-3"
+                className="btn-whatsapp shrink-0 text-xs sm:text-sm !px-3 sm:!px-5 !py-2 sm:!py-3 !min-h-[40px] sm:!min-h-[44px]"
               >
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
@@ -147,12 +154,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {/* Marca */}
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="h-10 w-10 rounded-full overflow-hidden border border-white/20">
-                    <Image src="/logo-etm.png" alt="ETM" width={40} height={40} />
-                  </div>
+                  <Image
+                    src="/logo-etm.png"
+                    alt=""
+                    width={56}
+                    height={56}
+                    className="h-14 w-14 object-contain"
+                  />
                   <div>
-                    <div className="font-display font-bold text-white">Enlaces Turísticos</div>
-                    <div className="text-xs text-white/50">Marroquí</div>
+                    <div className="font-display text-lg font-bold text-white leading-tight">Enlaces Turísticos</div>
+                    <div className="text-sm text-white/60 leading-tight">Marroquí</div>
                   </div>
                 </div>
                 <p className="text-sm text-white/60 leading-relaxed max-w-xs">
